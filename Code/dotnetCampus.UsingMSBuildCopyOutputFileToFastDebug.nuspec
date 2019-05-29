@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug</id>
+        <title>Using MSBuild Copy Output File To Fast Debug</title>
+        <version>1.0.0</version>
+        <authors>dotnet-campus</authors>
+        <owners>dotnet-campus</owners>
+        <license type="expression">MIT</license>
+        <projectUrl>https://github.com/dotnet-campus/UsingMSBuildCopyOutputFileToFastDebug</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Using MSBuild Copy Output File To Fast Debug
+        通过复制输出文件让 VisualStudio 外部启动快速调试底层库</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright 2019</copyright>
+        <tags>msbuild debug</tags>
+        <dependencies>
+            <group targetFramework=".NETFramework4.0" />
+            <group targetFramework=".NETCoreApp2.0">
+            </group>
+        </dependencies>
+    </metadata>
+</package>
