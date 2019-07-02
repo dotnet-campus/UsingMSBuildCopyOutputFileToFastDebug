@@ -50,7 +50,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 {
                     Console.WriteLine("发现需要复制的文件已经存在");
 
-                    var sourceFileName = sourceFile.Name.Replace(sourceFile.Extension, "");
+                    var sourceFileName = Path.GetFileNameWithoutExtension(sourceFile.FullName);
 
                     Console.WriteLine("开始移动文件");
 
