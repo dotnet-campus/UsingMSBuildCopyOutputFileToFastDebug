@@ -23,20 +23,20 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         {
             if (SourceFiles == null || !SourceFiles.Any())
             {
-                Console.WriteLine("warning: 用户没有传入需要复制的文件");
+                Console.WriteLine("warning: 没有传入需要复制的文件，请给 SourceFiles 赋值需要赋值的文件列表");
                 return true;
             }
 
             var str = new System.Text.StringBuilder();
 
-            str.Append("用户传入需要复制的文件\r\n");
+            str.Append("当前传入需要复制的文件\r\n");
             foreach (var sourceFile in SourceFiles)
             {
                 str.Append(sourceFile);
                 str.Append("\r\n"); // AppendLine 干什么去了
             }
 
-            str.Append("用户将要复制的文件夹");
+            str.Append("当前将要复制的文件夹");
             str.Append(DestinationFolder);
             str.Append("\r\n");
 
@@ -61,11 +61,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                         if (!File.Exists(newFileName))
                         {
                             File.Move(destinationFile, newFileName);
+                            Console.WriteLine($"移动文件完成，将{destinationFile}移动到{newFileName}");
                             break;
                         }
                     }
 
-                    Console.WriteLine("移动文件完成");
                 }
 
                 Console.WriteLine("复制文件");
