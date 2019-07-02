@@ -1,0 +1,20 @@
+﻿<Project>
+    <PropertyGroup>
+        <!-- 我们使用 $(MSBuildRuntimeType) 来判断编译器是 .NET Core 的还是 .NET Framework 的。
+         然后选用对应的文件夹。-->
+        <NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\netcoreapp2.2\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
+        <NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net48\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
+    </PropertyGroup>
+    <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask" 
+               AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
+
+    <Target Name="CopyOutputLibToFastDebug" AfterTargets="AfterBuild"
+            Condition="$(MainProjectPath)!=''">
+        <Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
+        <ItemGroup>
+            <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
+            <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).pdb"></OutputFileToCopy>
+        </ItemGroup>
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" DestinationFolder="$(MainProjectPath)"></SafeOutputFileCopyTask>
+    </Target>
+</Project>
