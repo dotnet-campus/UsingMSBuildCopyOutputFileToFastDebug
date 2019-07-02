@@ -36,7 +36,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 str.Append("\r\n"); // AppendLine 干什么去了
             }
 
-            str.Append("当前将要复制的文件夹");
+            str.Append("将要复制到的文件夹为");
             str.Append(DestinationFolder);
             str.Append("\r\n");
 
@@ -68,12 +68,14 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
                 }
 
-                Console.WriteLine("复制文件");
+                Console.WriteLine("开始复制文件 " + destinationFile);
 
                 File.Copy(sourceFile.FullName, destinationFile);
 
-                Console.WriteLine("复制完成" + destinationFile);
+                Console.WriteLine("完成复制文件 " + destinationFile);
             }
+
+            Console.WriteLine("全部复制完成");
 
             //Tracer = str.ToString();
             return true;
