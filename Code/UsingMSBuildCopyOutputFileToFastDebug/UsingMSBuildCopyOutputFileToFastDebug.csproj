@@ -30,10 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\Build">
+        <None Include="build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\build">
 
         </None>
-        <None Include="BuildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\BuildMultiTargeting">
+        <None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting">
 
         </None>
         <!-- <None Include="$(OutputPath)**\**" Pack="True" PackagePath="tools\" Visible="false"/> -->
