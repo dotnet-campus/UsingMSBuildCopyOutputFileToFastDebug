@@ -5,16 +5,33 @@
         <NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\netcoreapp2.2\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
         <NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net48\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
     </PropertyGroup>
+
+
+
     <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask" 
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
+    <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.LaunchSettingsParser"
+               AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
+
+    <Target Name="ParseLaunchSettings" AfterTargets="AfterBuild">
+        <Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
+        <LaunchSettingsParser>
+            <Output TaskParameter="LaunchMainProjectPath" PropertyName="LaunchMainProjectPath" ></Output>
+        </LaunchSettingsParser>
+    </Target>
+
 
     <Target Name="CopyOutputLibToFastDebug" AfterTargets="AfterBuild"
-            Condition="$(MainProjectPath)!=''">
+            Condition="$(MainProjectPath)!='' or $(LaunchMainProjectPath)!=''">
         <Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
         <ItemGroup>
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).pdb"></OutputFileToCopy>
         </ItemGroup>
-        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" DestinationFolder="$(MainProjectPath)"></SafeOutputFileCopyTask>
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" DestinationFolder="$(MainProjectPath)"
+                                Condition="$(MainProjectPath)!=''"></SafeOutputFileCopyTask>
+
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" DestinationFolder="$(LaunchMainProjectPath)"
+                                Condition="$(LaunchMainProjectPath)!='' and $(MainProjectPath)==''"></SafeOutputFileCopyTask>
     </Target>
 </Project>

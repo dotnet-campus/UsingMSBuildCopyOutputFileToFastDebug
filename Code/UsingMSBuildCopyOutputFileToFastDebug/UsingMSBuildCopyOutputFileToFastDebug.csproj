@@ -19,18 +19,24 @@
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <ApplicationIcon />
         <StartupObject />
-        <Version>1.3.1</Version>
+        <Version>1.3.7</Version>
         <PackageId>dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
       <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.0.461" />
+      <!--<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />-->
       <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
     </ItemGroup>
 
-    <ItemGroup>
-        <None Include="build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\build"/>
-        <None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting"/>
-    </ItemGroup>
+    <Target Name="UsingMSBuildCopyOutputFileToFastDebugPackage" BeforeTargets="_GetPackageFiles">
+        <ItemGroup>
+            <!--<None Include="$(OutputPath)\net48\Newtonsoft.Json.dll" Pack="True" PackagePath="\tools\net48\Newtonsoft.Json.dll" />
+            <None Include="$(USERPROFILE)\.nuget\packages\Newtonsoft.Json\12.0.2\lib\netstandard2.0\Newtonsoft.Json.dll" Pack="True" PackagePath="\tools\netcoreapp2.2\Newtonsoft.Json.dll" />-->
+            <None Include="build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\build\$(PackageId).targets" />
+            <None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting" />
+        </ItemGroup>
+    </Target>
+
 </Project>
