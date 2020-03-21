@@ -12,16 +12,21 @@
             Using MSBuild Copy Output File To Fast Debug
             通过复制输出文件让 VisualStudio 外部启动快速调试底层库
         </Description>
-        <Copyright>Copyright (c) 2019 dotnet-campus</Copyright>
+        <Copyright>Copyright (c) 2019-2020 dotnet-campus</Copyright>
         <PackageTags>msbuild debug</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <ApplicationIcon />
         <StartupObject />
-        <Version>1.3.7</Version>
+        <Version>1.3.37</Version>
         <PackageId>dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug</PackageId>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="Lsj.Util.JSON\Lsj.Util.JSON.csproj" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
@@ -38,5 +43,19 @@
             <None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting" />
         </ItemGroup>
     </Target>
-
+    <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+        <Reference Include="Microsoft.CSharp" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+        <Reference Include="Microsoft.CSharp" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+        <Reference Include="Microsoft.CSharp" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.2'">
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    </ItemGroup>
 </Project>

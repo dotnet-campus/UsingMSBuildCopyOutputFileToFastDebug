@@ -6,14 +6,13 @@
         <NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net48\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
     </PropertyGroup>
 
-
-
     <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask" 
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
     <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.LaunchSettingsParser"
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
 
-    <Target Name="ParseLaunchSettings" AfterTargets="AfterBuild">
+    <Target Name="ParseLaunchSettings" AfterTargets="AfterBuild"
+            BeforeTargets="CopyOutputLibToFastDebug" Condition="$(MainProjectPath)==''">
         <Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
         <LaunchSettingsParser>
             <Output TaskParameter="LaunchMainProjectPath" PropertyName="LaunchMainProjectPath" ></Output>
