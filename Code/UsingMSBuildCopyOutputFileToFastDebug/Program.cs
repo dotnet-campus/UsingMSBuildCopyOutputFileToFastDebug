@@ -6,14 +6,6 @@ using System.Linq;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-
-        }
-    }
-
     public class SafeOutputFileCopyTask : Microsoft.Build.Utilities.Task
     {
         public string[] SourceFiles { set; get; }
