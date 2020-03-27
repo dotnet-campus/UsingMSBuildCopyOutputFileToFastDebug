@@ -24,6 +24,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             if (!File.Exists(file))
             {
                 Console.WriteLine($"找不到{file}文件，读取结束");
+                return true;
             }
 
             var text = File.ReadAllText(file);
