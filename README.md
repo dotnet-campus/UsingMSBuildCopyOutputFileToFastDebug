@@ -12,6 +12,14 @@
 
 在需要调试的底层库项目安装 NuGet 库 [dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug](https://www.nuget.org/packages/dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug)
 
+此库推荐仅在 Debug 下安装
+
+```xml
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
+    <PackageReference Include="dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug" Version="1.3.1" />
+  </ItemGroup>
+```
+
 ### 配置
 
 配置有两个方法
