@@ -60,6 +60,18 @@
 
 关于二进制兼容请看 [VisualStudio 通过外部调试方法快速调试库代码](https://blog.lindexi.com/post/visualstudio-%E9%80%9A%E8%BF%87%E5%A4%96%E9%83%A8%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95%E5%BF%AB%E9%80%9F%E8%B0%83%E8%AF%95%E5%BA%93%E4%BB%A3%E7%A0%81 )
 
+## 细节
+
+默认仅有在 Debug 下开启此功能，如需在 Release 也开启，请通过设置 EnableUsingMSBuildCopyOutputFileToFastDebug 属性为 true 开启
+
+```xml
+    <PropertyGroup>
+        <EnableUsingMSBuildCopyOutputFileToFastDebug>true</EnableUsingMSBuildCopyOutputFileToFastDebug>
+    </PropertyGroup>
+```
+
+此项设置之后将会在 Debug 和 Release 下都开启复制
+
 ## 感谢
 
 感谢 https://github.com/kkwpsv/lsjutil 提供 json 解析
