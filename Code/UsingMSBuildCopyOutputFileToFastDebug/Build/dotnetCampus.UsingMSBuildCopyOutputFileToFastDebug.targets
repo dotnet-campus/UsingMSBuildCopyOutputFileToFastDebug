@@ -6,22 +6,32 @@
         <NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net48\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
     </PropertyGroup>
 
+    <!--默认只有在 Debug 下开启-->
+    <PropertyGroup Condition="$(EnableUsingMSBuildCopyOutputFileToFastDebug)==''">
+        <EnableUsingMSBuildCopyOutputFileToFastDebug Condition="'$(Configuration)' == 'Debug'">true</EnableUsingMSBuildCopyOutputFileToFastDebug>
+        <EnableUsingMSBuildCopyOutputFileToFastDebug Condition="'$(Configuration)' != 'Debug'">false</EnableUsingMSBuildCopyOutputFileToFastDebug>
+    </PropertyGroup>
+
     <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask" 
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
     <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.LaunchSettingsParser"
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
 
     <Target Name="ParseLaunchSettings" AfterTargets="AfterBuild"
-            BeforeTargets="CopyOutputLibToFastDebug" Condition="$(MainProjectPath)==''">
+            BeforeTargets="CopyOutputLibToFastDebug" Condition="$(MainProjectPath)=='' and $(EnableUsingMSBuildCopyOutputFileToFastDebug)==true">
         <Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
         <LaunchSettingsParser>
             <Output TaskParameter="LaunchMainProjectPath" PropertyName="LaunchMainProjectPath" ></Output>
         </LaunchSettingsParser>
     </Target>
 
+    <Target Name="BanCopyOutputLibToFastDebug" AfterTargets="AfterBuild"
+            Condition="$(EnableUsingMSBuildCopyOutputFileToFastDebug)!=true">
+        <Message Text="禁用 UsingMSBuildCopyOutputFileToFastDebug 因为 EnableUsingMSBuildCopyOutputFileToFastDebug 不为 true 值"/>
+    </Target>
 
     <Target Name="CopyOutputLibToFastDebug" AfterTargets="AfterBuild"
-            Condition="$(MainProjectPath)!='' or $(LaunchMainProjectPath)!=''">
+            Condition="($(MainProjectPath)!='' or $(LaunchMainProjectPath)!='') and $(EnableUsingMSBuildCopyOutputFileToFastDebug)==true">
         <Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
         <ItemGroup>
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
