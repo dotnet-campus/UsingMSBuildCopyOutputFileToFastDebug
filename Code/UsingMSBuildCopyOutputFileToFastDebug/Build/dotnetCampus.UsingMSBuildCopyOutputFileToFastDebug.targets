@@ -37,10 +37,14 @@
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).pdb"></OutputFileToCopy>
         </ItemGroup>
-        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" DestinationFolder="$(MainProjectPath)"
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" 
+                                DestinationFolder="$(MainProjectPath)"
+                                CleanFile="$(IntermediateOutputPath)$(CleanFile)"
                                 Condition="$(MainProjectPath)!=''"></SafeOutputFileCopyTask>
 
-        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" DestinationFolder="$(LaunchMainProjectPath)"
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" 
+                                DestinationFolder="$(LaunchMainProjectPath)"
+                                CleanFile="$(IntermediateOutputPath)$(CleanFile)"
                                 Condition="$(LaunchMainProjectPath)!='' and $(MainProjectPath)==''"></SafeOutputFileCopyTask>
     </Target>
 </Project>

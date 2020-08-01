@@ -11,6 +11,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         public string[] SourceFiles { set; get; }
         public string DestinationFolder { set; get; }
 
+        /// <summary>
+        /// 用于清理文件
+        /// </summary>
+        public string CleanFile { set; get; }
+
         public override bool Execute()
         {
             if (SourceFiles == null || !SourceFiles.Any())
@@ -54,6 +59,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                         {
                             File.Move(destinationFile, newFileName);
                             Console.WriteLine($"移动文件完成，将{destinationFile}移动到{newFileName}");
+                            AddToClean(newFileName);
                             break;
                         }
                     }
@@ -71,6 +77,23 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             //Tracer = str.ToString();
             return true;
+        }
+
+        private void AddToClean(string newFileName)
+        {
+            // 加入到清理文件
+
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    File.AppendAllLines(CleanFile, new[] { newFileName });
+                }
+                catch (Exception)
+                {
+                    // 忽略
+                }
+            }
         }
     }
 }
