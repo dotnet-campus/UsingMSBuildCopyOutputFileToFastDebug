@@ -87,6 +87,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             {
                 try
                 {
+                    newFileName = Path.GetFullPath(newFileName);
                     File.AppendAllLines(CleanFile, new[] { newFileName });
                 }
                 catch (Exception)

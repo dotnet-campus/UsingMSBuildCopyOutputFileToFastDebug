@@ -12,7 +12,7 @@
         <description>Using MSBuild Copy Output File To Fast Debug
         通过复制输出文件让 VisualStudio 外部启动快速调试底层库</description>
         <releaseNotes></releaseNotes>
-        <copyright>Copyright 2019</copyright>
+        <copyright>Copyright 2020</copyright>
         <tags>msbuild debug</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.0" />
