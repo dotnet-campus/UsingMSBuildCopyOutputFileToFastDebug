@@ -14,10 +14,10 @@
 
     <!-- 清理文件 -->
     <PropertyGroup>
-	    <CleanUsingMSBuildCopyOutputFileToFastDebugFile>$(IntermediateOutputPath)CleanUsingMSBuildCopyOutputFileToFastDebugFile.txt</CleanUsingMSBuildCopyOutputFileToFastDebugFile>
+        <CleanUsingMSBuildCopyOutputFileToFastDebugFile>$(IntermediateOutputPath)CleanUsingMSBuildCopyOutputFileToFastDebugFile.txt</CleanUsingMSBuildCopyOutputFileToFastDebugFile>
     </PropertyGroup>
 
-	<UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask" 
+    <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask"
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
     <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.LaunchSettingsParser"
                AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" />
@@ -42,29 +42,29 @@
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
             <OutputFileToCopy Include="$(OutputPath)$(AssemblyName).pdb"></OutputFileToCopy>
         </ItemGroup>
-        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" 
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)"
                                 DestinationFolder="$(MainProjectPath)"
                                 CleanFile="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)"
                                 Condition="$(MainProjectPath)!=''"></SafeOutputFileCopyTask>
 
-        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)" 
+        <SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)"
                                 DestinationFolder="$(LaunchMainProjectPath)"
                                 CleanFile="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)"
                                 Condition="$(LaunchMainProjectPath)!='' and $(MainProjectPath)==''"></SafeOutputFileCopyTask>
     </Target>
 
     <Target Name="UsingMSBuildCopyOutputFileToFastDebugClean" AfterTargets="Clean">
-	    <ReadLinesFromFile
-		    File="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)" >
-		    <Output
-			    TaskParameter="Lines"
-			    ItemName="UsingMSBuildCopyOutputFileToFastDebugCleanFile"/>
-	    </ReadLinesFromFile>
+        <ReadLinesFromFile
+            File="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)" >
+            <Output
+                TaskParameter="Lines"
+                ItemName="UsingMSBuildCopyOutputFileToFastDebugCleanFile"/>
+        </ReadLinesFromFile>
 
-		<Delete Files="@(UsingMSBuildCopyOutputFileToFastDebugCleanFile)" >
-			<Output TaskParameter="DeletedFiles" ItemName="UsingMSBuildCopyOutputFileToFastDebugCleanFileDeletedList"/>
-		</Delete>
+        <Delete Files="@(UsingMSBuildCopyOutputFileToFastDebugCleanFile)" >
+            <Output TaskParameter="DeletedFiles" ItemName="UsingMSBuildCopyOutputFileToFastDebugCleanFileDeletedList"/>
+        </Delete>
 
-	    <Message Text="Deleted files: '@(UsingMSBuildCopyOutputFileToFastDebugCleanFileDeletedList)'"/>
+        <Message Text="Deleted files: '@(UsingMSBuildCopyOutputFileToFastDebugCleanFileDeletedList)'"/>
     </Target>
 </Project>
