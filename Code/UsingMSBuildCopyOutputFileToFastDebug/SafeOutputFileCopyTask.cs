@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
@@ -10,6 +11,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
     {
         public string[] SourceFiles { set; get; }
         public string DestinationFolder { set; get; }
+
+        /// <summary>
+        /// 用于清理文件
+        /// </summary>
+        public string CleanFile { set; get; }
 
         public override bool Execute()
         {
@@ -54,6 +60,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                         {
                             File.Move(destinationFile, newFileName);
                             Console.WriteLine($"移动文件完成，将{destinationFile}移动到{newFileName}");
+                            AddToClean(newFileName);
                             break;
                         }
                     }
@@ -71,6 +78,28 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             //Tracer = str.ToString();
             return true;
+        }
+
+        private async void AddToClean(string newFileName)
+        {
+            // 加入到清理文件
+
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    newFileName = Path.GetFullPath(newFileName);
+                    File.AppendAllLines(CleanFile, new[] { newFileName });
+
+                    return;
+                }
+                catch (Exception)
+                {
+                    // 忽略
+                }
+
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+            }
         }
     }
 }
