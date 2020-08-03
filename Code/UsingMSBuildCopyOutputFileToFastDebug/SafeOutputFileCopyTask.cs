@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
@@ -79,7 +80,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             return true;
         }
 
-        private void AddToClean(string newFileName)
+        private async void AddToClean(string newFileName)
         {
             // 加入到清理文件
 
@@ -89,11 +90,15 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 {
                     newFileName = Path.GetFullPath(newFileName);
                     File.AppendAllLines(CleanFile, new[] { newFileName });
+
+                    return;
                 }
                 catch (Exception)
                 {
                     // 忽略
                 }
+
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
             }
         }
     }
