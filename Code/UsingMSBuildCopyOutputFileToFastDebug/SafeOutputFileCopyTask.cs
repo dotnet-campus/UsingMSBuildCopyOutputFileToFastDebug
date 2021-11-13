@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
-    public class SafeOutputFileCopyTask : Microsoft.Build.Utilities.Task
+    public class SafeOutputFileCopyTask 
     {
         public string[] SourceFiles { set; get; }
         public string DestinationFolder { set; get; }
@@ -17,7 +16,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         /// </summary>
         public string CleanFile { set; get; }
 
-        public override bool Execute()
+        public bool Execute()
         {
             if (SourceFiles == null || !SourceFiles.Any())
             {

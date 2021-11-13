@@ -1,43 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Library</OutputType>
-        <TargetFrameworks>net48;netcoreapp2.2</TargetFrameworks>
-        <ApplicationIcon />
-        <StartupObject />
-        <PackageId>dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug</PackageId>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net5.0</TargetFrameworks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<!-- 这个项目不进行打包，实际打包的是 ToolPackager 项目 -->
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <None Include="Lsj.Util.JSON\Lsj.Util.JSON.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
-      <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.0.461" />
-      <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
-    </ItemGroup>
-
-    <Target Name="UsingMSBuildCopyOutputFileToFastDebugPackage" BeforeTargets="_GetPackageFiles">
-        <ItemGroup>
-            <None Include="build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\build\$(PackageId).targets" />
-            <None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting" />
-        </ItemGroup>
-    </Target>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
-        <Reference Include="Microsoft.CSharp" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-        <Reference Include="Microsoft.CSharp" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-        <Reference Include="Microsoft.CSharp" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.2'">
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="dotnetCampus.CommandLine" Version="3.3.1-alpha03" />
+		<PackageReference Include="dotnetCampus.MSBuildUtils.Source" Version="1.1.1-alpha01">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Lsj.Util.JSON" Version="5.1.1" />
+	</ItemGroup>
 </Project>

@@ -1,0 +1,86 @@
+﻿<Project>
+	<PropertyGroup>
+		<NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder >$(MSBuildThisFileDirectory)..\tools\</NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder>
+		<UsingMSBuildCopyOutputFileToFastDebugTaskFile>"$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)UsingMSBuildCopyOutputFileToFastDebug.dll"</UsingMSBuildCopyOutputFileToFastDebugTaskFile>
+	</PropertyGroup>
+
+	<!--默认只有在 Debug 下开启-->
+	<PropertyGroup Condition="$(EnableUsingMSBuildCopyOutputFileToFastDebug)==''">
+		<EnableUsingMSBuildCopyOutputFileToFastDebug Condition="'$(Configuration)' == 'Debug'">true</EnableUsingMSBuildCopyOutputFileToFastDebug>
+		<EnableUsingMSBuildCopyOutputFileToFastDebug Condition="'$(Configuration)' != 'Debug'">false</EnableUsingMSBuildCopyOutputFileToFastDebug>
+	</PropertyGroup>
+
+	<!-- 清理文件 -->
+	<PropertyGroup>
+		<CleanUsingMSBuildCopyOutputFileToFastDebugFile>"$(IntermediateOutputPath)CleanUsingMSBuildCopyOutputFileToFastDebugFile.txt"</CleanUsingMSBuildCopyOutputFileToFastDebugFile>
+	</PropertyGroup>
+
+	<!-- <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.SafeOutputFileCopyTask" -->
+	<!--               AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" /> -->
+	<!-- <UsingTask TaskName="UsingMSBuildCopyOutputFileToFastDebug.LaunchSettingsParser" -->
+	<!--               AssemblyFile="$(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)\UsingMSBuildCopyOutputFileToFastDebug.dll" /> -->
+
+
+
+	<Target Name="CopyOutputLibToFastDebug" AfterTargets="AfterBuild" Condition="$(EnableUsingMSBuildCopyOutputFileToFastDebug)==true">
+
+		<ItemGroup>
+			<OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
+			<!-- 没有pdb文件拷贝过去，将会在调试提示没有符号，因此需要加上符号 -->
+			<OutputFileToCopy Include="$(OutputPath)$(AssemblyName).pdb"></OutputFileToCopy>
+		</ItemGroup>
+
+		<PropertyGroup>
+			<OutputFileToCopyList>"@(OutputFileToCopy)"</OutputFileToCopyList>
+    </PropertyGroup>
+
+		<Exec Command="dotnet $(UsingMSBuildCopyOutputFileToFastDebugTaskFile) -- CopyOutputFile -MainProjectPath $(MainProjectPath) -CleanFilePath $(CleanUsingMSBuildCopyOutputFileToFastDebugFile) -OutputFileToCopyList $(OutputFileToCopyList)"/>
+	</Target>
+
+	<!--<Target Name="ParseLaunchSettings" AfterTargets="AfterBuild"
+            BeforeTargets="CopyOutputLibToFastDebug" Condition="$(MainProjectPath)=='' and $(EnableUsingMSBuildCopyOutputFileToFastDebug)==true">
+		<Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
+		<LaunchSettingsParser>
+			<Output TaskParameter="LaunchMainProjectPath" PropertyName="LaunchMainProjectPath" ></Output>
+		</LaunchSettingsParser>
+	</Target>-->
+
+	<Target Name="BanCopyOutputLibToFastDebug" AfterTargets="AfterBuild"
+            Condition="$(EnableUsingMSBuildCopyOutputFileToFastDebug)!=true">
+		<Message Text="禁用 UsingMSBuildCopyOutputFileToFastDebug 因为 EnableUsingMSBuildCopyOutputFileToFastDebug 不为 true 值"/>
+	</Target>
+
+	<!--<Target Name="CopyOutputLibToFastDebug" AfterTargets="AfterBuild"
+            Condition="($(MainProjectPath)!='' or $(LaunchMainProjectPath)!='') and $(EnableUsingMSBuildCopyOutputFileToFastDebug)==true">
+		<Message Text="当前使用的复制方法 $(NuGetUsingMSBuildCopyOutputFileToFastDebugTaskFolder)" />
+		<ItemGroup>
+			<OutputFileToCopy Include="$(OutputPath)$(AssemblyName).dll"></OutputFileToCopy>
+			<OutputFileToCopy Include="$(OutputPath)$(AssemblyName).pdb"></OutputFileToCopy>
+		</ItemGroup>
+		<SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)"
+                                DestinationFolder="$(MainProjectPath)"
+                                CleanFile="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)"
+                                Condition="$(MainProjectPath)!=''"></SafeOutputFileCopyTask>
+
+		<SafeOutputFileCopyTask SourceFiles="@(OutputFileToCopy)"
+                                DestinationFolder="$(LaunchMainProjectPath)"
+                                CleanFile="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)"
+                                Condition="$(LaunchMainProjectPath)!='' and $(MainProjectPath)==''"></SafeOutputFileCopyTask>
+	</Target>-->
+
+	<Target Name="UsingMSBuildCopyOutputFileToFastDebugClean" AfterTargets="Clean">
+    <Exec Command="dotnet $(UsingMSBuildCopyOutputFileToFastDebugTaskFile) -- Clean -CleanFilePath $(CleanUsingMSBuildCopyOutputFileToFastDebugFile) "/>
+    <!--<ReadLinesFromFile
+            File="$(CleanUsingMSBuildCopyOutputFileToFastDebugFile)" >
+			<Output
+                TaskParameter="Lines"
+                ItemName="UsingMSBuildCopyOutputFileToFastDebugCleanFile"/>
+		</ReadLinesFromFile>
+
+		<Delete Files="@(UsingMSBuildCopyOutputFileToFastDebugCleanFile)" >
+			<Output TaskParameter="DeletedFiles" ItemName="UsingMSBuildCopyOutputFileToFastDebugCleanFileDeletedList"/>
+		</Delete>
+
+		<Message Text="Deleted files: '@(UsingMSBuildCopyOutputFileToFastDebugCleanFileDeletedList)'"/>-->
+	</Target>
+</Project>

@@ -4,19 +4,17 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml;
 using Lsj.Util.Collections;
 using Lsj.Util.JSON;
-using Microsoft.Build.Framework;
-//using Newtonsoft.Json;
-//using Newtonsoft.Json.Linq;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
-    public class LaunchSettingsParser : Microsoft.Build.Utilities.Task
+    public class LaunchSettingsParser
     {
-        /// <inheritdoc />
-        public override bool Execute()
+        public bool Execute()
         {
             var file = Path.Combine("Properties", "launchSettings.json");
             Console.WriteLine("开始从 launchSettings 文件读取输出文件夹");
@@ -57,7 +55,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             return true;
         }
 
-        [Output]
         public string LaunchMainProjectPath { set; get; }
     }
 
