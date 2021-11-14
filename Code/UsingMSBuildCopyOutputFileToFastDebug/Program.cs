@@ -78,7 +78,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         /// <returns></returns>
         private static FileInfo GetLaunchMainProjectExecutablePath(CopyOutputFileOptions copyOutputFileOptions)
         {
-            var mainProjectPath = copyOutputFileOptions.MainProjectPath;
+            var mainProjectPath = copyOutputFileOptions.MainProjectExecutablePath;
             // 如果用户有设置此文件夹，那就期望是输出到此文件夹
             if (!string.IsNullOrEmpty(mainProjectPath))
             {
@@ -114,7 +114,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 return new FileInfo(launchMainProjectExecutablePath!);
             }
 
-            throw new ArgumentException($"没有从 MainProjectPath 和 LaunchSettings 获取到输出的文件夹");
+            throw new ArgumentException($"没有从 MainProjectExecutablePath 和 LaunchSettings 获取到输出的文件夹");
         }
 
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();
@@ -132,8 +132,8 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
     [Verb("CopyOutputFile")]
     public class CopyOutputFileOptions
     {
-        [Option("MainProjectPath")] 
-        public string MainProjectPath { set; get; } = null!;
+        [Option("MainProjectExecutablePath")] 
+        public string MainProjectExecutablePath { set; get; } = null!;
 
         [Option("CleanFilePath")] 
         public string CleanFilePath { set; get; }

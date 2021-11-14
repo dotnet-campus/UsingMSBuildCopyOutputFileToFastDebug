@@ -28,13 +28,15 @@
 
 通过右击底层库属性，点击调试，设置为可执行文件，路径修改为主项目的启动程序。就可以在底层库点击调试运行主项目调试，同时支持打断点和进行二进制兼容的更改
 
+请注意，将使用首个可执行文件调试配置作为输出配置
+
 **高级方法**：
 
 编辑底层库项目的 csproj 文件，添加下面代码
 
 ```xml
     <PropertyGroup>
-        <MainProjectPath>主项目的输出文件夹</MainProjectPath>
+        <MainProjectPath>主项目的输出可执行文件</MainProjectPath>
     </PropertyGroup>
 ```
 
@@ -42,7 +44,7 @@
 
 ```xml
     <PropertyGroup>
-        <MainProjectPath>"C:\dotnet campus\Foo\bin\release\net5.0"</MainProjectPath>
+        <MainProjectExecutablePathCommandArgs>"C:\dotnet campus\Foo\bin\release\net5.0\Foo.exe"</MainProjectPath>
     </PropertyGroup>
 ```
 
