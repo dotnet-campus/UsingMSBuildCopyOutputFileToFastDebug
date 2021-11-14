@@ -54,6 +54,12 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
             var targetFolder = GetTargetFolder(copyOutputFileOptions);
+            if (TargetFrameworkChecker.CheckCanCopy(targetFolder, copyOutputFileOptions) is false)
+            {
+                // 如果当前的框架是兼容的，那就进行拷贝，否则不做任何拷贝逻辑
+                return;
+            }
+
             var outputFileList = GetOutputFileList(copyOutputFileOptions.OutputFileToCopyList);
         }
 
@@ -110,7 +116,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
     public static class TargetFrameworkChecker
     {
+        public static bool CheckCanCopy(DirectoryInfo targetFolder, CopyOutputFileOptions copyOutputFileOptions)
+        {
 
+            return true;
+        }
     }
 
     [Verb("CopyOutputFile")]
