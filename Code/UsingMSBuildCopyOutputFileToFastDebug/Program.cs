@@ -50,11 +50,14 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
-            var launchMainProjectExecutablePath = GetLaunchMainProjectExecutablePath(copyOutputFileOptions);
-            Logger.Message($"LaunchMainProjectExecutablePath={launchMainProjectExecutablePath}");
-            var destinationFolder = launchMainProjectExecutablePath.Directory;
-            if (TargetFrameworkChecker.CheckCanCopy(destinationFolder, copyOutputFileOptions) is false)
+            var launchMainProjectExecutableFile = GetLaunchMainProjectExecutablePath(copyOutputFileOptions);
+            Logger.Message($"LaunchMainProjectExecutablePath={launchMainProjectExecutableFile}");
+            var destinationFolder = launchMainProjectExecutableFile.Directory;
+            if (TargetFrameworkChecker.CheckCanCopy(launchMainProjectExecutableFile, copyOutputFileOptions) is false)
             {
+#if DEBUG
+                Logger.Message($"当前框架{copyOutputFileOptions.TargetFramework}与{launchMainProjectExecutableFile.FullName}不兼容");
+#endif
                 // 如果当前的框架是兼容的，那就进行拷贝，否则不做任何拷贝逻辑
                 return;
             }
@@ -62,7 +65,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             var outputFileList = copyOutputFileOptions.GetOutputFileList();
             var safeOutputFileCopyTask = new SafeOutputFileCopyTask()
             {
-                DestinationFolder = destinationFolder.FullName,
+                DestinationFolder = destinationFolder!.FullName,
                 CleanFile = copyOutputFileOptions.CleanFilePath,
                 SourceFiles = outputFileList.Select(t => t.FullName).ToArray()
             };
@@ -120,14 +123,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();
     }
 
-
-    public static class TargetFrameworkChecker
-    {
-        public static bool CheckCanCopy(DirectoryInfo targetFolder, CopyOutputFileOptions copyOutputFileOptions)
-        {
-            return true;
-        }
-    }
 
     [Verb("CopyOutputFile")]
     public class CopyOutputFileOptions
