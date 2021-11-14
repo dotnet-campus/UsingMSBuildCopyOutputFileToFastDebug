@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using dotnetCampus.Cli;
 using dotnetCampus.MSBuildUtils;
 
@@ -16,6 +17,17 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 Logger.Message($"Args[{i}]={args[i]}");
             }
 #endif
+
+            if (args[0] == "--")
+            {
+                // 为了兼容旧版本，依然使用如下格式
+                // dotnet foo.dll -- --a 1 --b ab
+                // 在 .NET 6 将会让 -- 作为第一个参数，因此需要去掉
+                var list = args.ToList();
+                list.RemoveAt(0);
+                args = list.ToArray();
+                // 还好上面代码不在乎性能，让我试试这个逗比方法
+            }
 
             CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
             {
