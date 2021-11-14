@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using dotnetCampus.Cli;
 using dotnetCampus.MSBuildUtils;
@@ -36,10 +37,40 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 .AddHandler<CopyOutputFileOptions>(c =>
                 {
                     Logger.Message($"Enter CopyOutputFileOptions");
-                });
+                    CopyOutputFile(c);
+                })
+                .Run();
+        }
+
+        private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
+        {
+            
+        }
+
+        /// <summary>
+        /// 获取准备输出的文件夹
+        /// </summary>
+        /// <param name="copyOutputFileOptions"></param>
+        /// <returns></returns>
+        private static DirectoryInfo GetTargetFolder(CopyOutputFileOptions copyOutputFileOptions)
+        {
+            var mainProjectPath = copyOutputFileOptions.MainProjectPath;
+            // 如果用户有设置此文件夹，那就期望是输出到此文件夹
+            if(!string.IsNullOrEmpty(mainProjectPath))
+            {
+                return new DirectoryInfo(mainProjectPath);
+            }
+
+            return null;
         }
 
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();
+    }
+
+
+    public static class TargetFrameworkChecker
+    {
+
     }
 
     [Verb("CopyOutputFile")]
