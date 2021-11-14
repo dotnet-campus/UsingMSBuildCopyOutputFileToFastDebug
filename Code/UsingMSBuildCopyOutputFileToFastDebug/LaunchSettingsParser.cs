@@ -42,8 +42,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                     if (executablePath != null)
                     {
                         // executablePath = C:\lindexi\foo\foo.exe
-                        // 需要拿到的是文件夹
-                        LaunchMainProjectPath = Path.GetDirectoryName(executablePath.ToString());
+                        LaunchMainProjectExecutablePath = executablePath.ToString();
                         return true;
                     }
                 }
@@ -52,6 +51,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             return false;
         }
 
-        public string LaunchMainProjectPath { set; get; }
+        public string LaunchMainProjectExecutablePath { set; get; }
     }
 }

@@ -50,14 +50,16 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
-            var destinationFolder = GetDestinationFolder(copyOutputFileOptions);
+            var launchMainProjectExecutablePath = GetLaunchMainProjectExecutablePath(copyOutputFileOptions);
+            Logger.Message($"LaunchMainProjectExecutablePath={launchMainProjectExecutablePath}");
+            var destinationFolder = launchMainProjectExecutablePath.Directory;
             if (TargetFrameworkChecker.CheckCanCopy(destinationFolder, copyOutputFileOptions) is false)
             {
                 // 如果当前的框架是兼容的，那就进行拷贝，否则不做任何拷贝逻辑
                 return;
             }
 
-            var outputFileList = GetOutputFileList(copyOutputFileOptions.OutputFileToCopyList);
+            var outputFileList = copyOutputFileOptions.GetOutputFileList();
             var safeOutputFileCopyTask = new SafeOutputFileCopyTask()
             {
                 DestinationFolder = destinationFolder.FullName,
@@ -67,49 +69,49 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             safeOutputFileCopyTask.Execute();
         }
 
-        private static List<FileInfo> GetOutputFileList(string outputFileToCopyList)
-        {
-            var fileList = new List<FileInfo>();
-            foreach (var file in outputFileToCopyList.Split(System.IO.Path.PathSeparator))
-            {
-                // 不要优化 Linq 我需要调试这些文件，在这里加断点
-                fileList.Add(new FileInfo(file));
-            }
-
-            return fileList;
-        }
+       
 
         /// <summary>
-        /// 获取准备输出的文件夹
+        /// 获取准备运行的 Exe 的路径
         /// </summary>
         /// <param name="copyOutputFileOptions"></param>
         /// <returns></returns>
-        private static DirectoryInfo GetDestinationFolder(CopyOutputFileOptions copyOutputFileOptions)
+        private static FileInfo GetLaunchMainProjectExecutablePath(CopyOutputFileOptions copyOutputFileOptions)
         {
             var mainProjectPath = copyOutputFileOptions.MainProjectPath;
             // 如果用户有设置此文件夹，那就期望是输出到此文件夹
             if (!string.IsNullOrEmpty(mainProjectPath))
             {
-                if (Directory.Exists(mainProjectPath) is false)
+                if (File.Exists(mainProjectPath) is false)
                 {
-                    throw new DirectoryNotFoundException(
+                    throw new FileNotFoundException(
                         $"Can not find '{mainProjectPath}' FullPath={Path.GetFullPath(mainProjectPath)}");
                 }
 
-                return new DirectoryInfo(mainProjectPath);
+                return new FileInfo(mainProjectPath);
             }
 
             // 尝试去读取 LaunchSettings 文件
             var launchSettingsParser = new LaunchSettingsParser();
             if (launchSettingsParser.Execute())
             {
-                var launchMainProjectPath = launchSettingsParser.LaunchMainProjectPath;
-                if (Directory.Exists(launchMainProjectPath) is false)
+                string launchMainProjectExecutablePath = launchSettingsParser.LaunchMainProjectExecutablePath!;
+                // 获取到的 launchMainProjectPath 如果是相对路径，那么相对的是当前的输出文件的路径，而不是 csproj 的路径
+                if (Path.IsPathRooted(launchMainProjectExecutablePath) is false)
                 {
-                    throw new DirectoryNotFoundException($"Can not find '{launchMainProjectPath}'");
+                    launchMainProjectExecutablePath =
+                        Path.Combine(copyOutputFileOptions.GetOutputFileList().First().Directory!.FullName,
+                            launchMainProjectExecutablePath!);
+
+                    launchMainProjectExecutablePath = Path.GetFullPath(launchMainProjectExecutablePath);
                 }
 
-                return new DirectoryInfo(launchMainProjectPath);
+                if (File.Exists(launchMainProjectExecutablePath) is false)
+                {
+                    throw new FileNotFoundException($"Can not find '{launchMainProjectExecutablePath}'");
+                }
+
+                return new FileInfo(launchMainProjectExecutablePath!);
             }
 
             throw new ArgumentException($"没有从 MainProjectPath 和 LaunchSettings 获取到输出的文件夹");
@@ -130,18 +132,35 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
     [Verb("CopyOutputFile")]
     public class CopyOutputFileOptions
     {
-        [Option("MainProjectPath")] public string MainProjectPath { set; get; } = null!;
+        [Option("MainProjectPath")] 
+        public string MainProjectPath { set; get; } = null!;
 
-        [Option("CleanFilePath")] public string CleanFilePath { set; get; }
+        [Option("CleanFilePath")] 
+        public string CleanFilePath { set; get; }
 
-        [Option("OutputFileToCopyList")] public string OutputFileToCopyList { set; get; }
+        [Option("OutputFileToCopyList")] 
+        public string OutputFileToCopyList { set; get; }
 
-        [Option("TargetFramework")] public string TargetFramework { set; get; }
+        [Option("TargetFramework")] 
+        public string TargetFramework { set; get; }
+
+        public List<FileInfo> GetOutputFileList()
+        {
+            var fileList = new List<FileInfo>();
+            foreach (var file in OutputFileToCopyList.Split(System.IO.Path.PathSeparator))
+            {
+                // 不要优化 Linq 我需要调试这些文件，在这里加断点
+                fileList.Add(new FileInfo(file));
+            }
+
+            return fileList;
+        }
     }
 
     [Verb("Clean")]
     public class CleanOptions
     {
-        [Option("CleanFilePath")] public string CleanFilePath { set; get; }
+        [Option("CleanFilePath")] 
+        public string CleanFilePath { set; get; }
     }
 }
