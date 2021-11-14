@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;
 using System.Xml;
 using Lsj.Util.Collections;
 using Lsj.Util.JSON;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
@@ -27,27 +29,19 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             var text = File.ReadAllText(file);
 
-            var o = JSONParser.Parse(text);
-            var profiles = o.profiles;
-            var data = profiles.data;
-            if (data is SafeDictionary<string, object> d)
-            {
-                foreach (var keyValuePair in d)
-                {
-                    if (keyValuePair.Value is JSONObject jsonObject)
-                    {
-                        if (jsonObject.TryGetMember(new CustomGetMemberBinder("ExecutablePath", true),
-                            out var filePath))
-                        {
-                            var path = filePath?.ToString();
+            var root = (JObject) JsonConvert.DeserializeObject(text);
+            var profilesObject = (JObject)root["profiles"];
 
-                            if (!string.IsNullOrEmpty(path))
-                            {
-                                LaunchMainProjectPath = Path.GetDirectoryName(path);
-                                Console.WriteLine($"读取到 {LaunchMainProjectPath} 文件夹");
-                                return true;
-                            }
-                        }
+            foreach (var keyValuePair in profilesObject)
+            {
+                var commandName = keyValuePair.Value["commandName"];
+                if (commandName?.ToString() == "Executable")
+                {
+                    var executablePath = keyValuePair.Value["executablePath"];
+                    if (executablePath != null)
+                    {
+                        LaunchMainProjectPath = executablePath.ToString();
+                        return true;
                     }
                 }
             }
@@ -56,19 +50,5 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         }
 
         public string LaunchMainProjectPath { set; get; }
-    }
-
-    public class CustomGetMemberBinder : GetMemberBinder
-    {
-        /// <inheritdoc />
-        public CustomGetMemberBinder(string name, bool ignoreCase) : base(name, ignoreCase)
-        {
-        }
-
-        /// <inheritdoc />
-        public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
-        {
-            return null;
-        }
     }
 }

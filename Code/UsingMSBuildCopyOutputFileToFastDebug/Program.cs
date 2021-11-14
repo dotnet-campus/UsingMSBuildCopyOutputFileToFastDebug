@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using dotnetCampus.Cli;
@@ -52,7 +53,20 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
+            var targetFolder = GetTargetFolder(copyOutputFileOptions);
+            var outputFileList = GetOutputFileList(copyOutputFileOptions.OutputFileToCopyList);
+        }
 
+        private static List<FileInfo> GetOutputFileList(string outputFileToCopyList)
+        {
+            var fileList = new List<FileInfo>();
+            foreach (var file in outputFileToCopyList.Split(System.IO.Path.PathSeparator))
+            {
+                // 不要优化 Linq 我需要调试这些文件，在这里加断点
+                fileList.Add(new FileInfo(file));
+            }
+
+            return fileList;
         }
 
         /// <summary>
