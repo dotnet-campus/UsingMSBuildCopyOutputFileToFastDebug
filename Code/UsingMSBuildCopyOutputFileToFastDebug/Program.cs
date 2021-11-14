@@ -33,16 +33,13 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             try
             {
-                return CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
-                     {
-                         Logger.Message($"Enter CleanOptions");
-                     })
-                     .AddHandler<CopyOutputFileOptions>(c =>
-                     {
-                         Logger.Message($"Enter CopyOutputFileOptions");
-                         CopyOutputFile(c);
-                     })
-                     .Run();
+                return CommandLine.Parse(args).AddHandler<CleanOptions>(c => { Logger.Message($"Enter CleanOptions"); })
+                    .AddHandler<CopyOutputFileOptions>(c =>
+                    {
+                        Logger.Message($"Enter CopyOutputFileOptions");
+                        CopyOutputFile(c);
+                    })
+                    .Run();
             }
             catch (Exception e)
             {
@@ -53,14 +50,21 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
-            var targetFolder = GetTargetFolder(copyOutputFileOptions);
-            if (TargetFrameworkChecker.CheckCanCopy(targetFolder, copyOutputFileOptions) is false)
+            var destinationFolder = GetDestinationFolder(copyOutputFileOptions);
+            if (TargetFrameworkChecker.CheckCanCopy(destinationFolder, copyOutputFileOptions) is false)
             {
                 // 如果当前的框架是兼容的，那就进行拷贝，否则不做任何拷贝逻辑
                 return;
             }
 
             var outputFileList = GetOutputFileList(copyOutputFileOptions.OutputFileToCopyList);
+            var safeOutputFileCopyTask = new SafeOutputFileCopyTask()
+            {
+                DestinationFolder = destinationFolder.FullName,
+                CleanFile = copyOutputFileOptions.CleanFilePath,
+                SourceFiles = outputFileList.Select(t => t.FullName).ToArray()
+            };
+            safeOutputFileCopyTask.Execute();
         }
 
         private static List<FileInfo> GetOutputFileList(string outputFileToCopyList)
@@ -80,7 +84,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         /// </summary>
         /// <param name="copyOutputFileOptions"></param>
         /// <returns></returns>
-        private static DirectoryInfo GetTargetFolder(CopyOutputFileOptions copyOutputFileOptions)
+        private static DirectoryInfo GetDestinationFolder(CopyOutputFileOptions copyOutputFileOptions)
         {
             var mainProjectPath = copyOutputFileOptions.MainProjectPath;
             // 如果用户有设置此文件夹，那就期望是输出到此文件夹
@@ -94,6 +98,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
                 return new DirectoryInfo(mainProjectPath);
             }
+
             // 尝试去读取 LaunchSettings 文件
             var launchSettingsParser = new LaunchSettingsParser();
             if (launchSettingsParser.Execute())
@@ -118,7 +123,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
     {
         public static bool CheckCanCopy(DirectoryInfo targetFolder, CopyOutputFileOptions copyOutputFileOptions)
         {
-
             return true;
         }
     }
@@ -126,23 +130,18 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
     [Verb("CopyOutputFile")]
     public class CopyOutputFileOptions
     {
-        [Option("MainProjectPath")]
-        public string MainProjectPath { set; get; } = null!;
+        [Option("MainProjectPath")] public string MainProjectPath { set; get; } = null!;
 
-        [Option("CleanFilePath")]
-        public string CleanFilePath { set; get; }
+        [Option("CleanFilePath")] public string CleanFilePath { set; get; }
 
-        [Option("OutputFileToCopyList")]
-        public string OutputFileToCopyList { set; get; }
+        [Option("OutputFileToCopyList")] public string OutputFileToCopyList { set; get; }
 
-        [Option("TargetFramework")]
-        public string TargetFramework { set; get; }
+        [Option("TargetFramework")] public string TargetFramework { set; get; }
     }
 
     [Verb("Clean")]
     public class CleanOptions
     {
-        [Option("CleanFilePath")]
-        public string CleanFilePath { set; get; }
+        [Option("CleanFilePath")] public string CleanFilePath { set; get; }
     }
 }

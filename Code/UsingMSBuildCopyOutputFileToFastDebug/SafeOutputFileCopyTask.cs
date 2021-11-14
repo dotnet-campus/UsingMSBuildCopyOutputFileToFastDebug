@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
@@ -79,7 +80,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             return true;
         }
 
-        private async void AddToClean(string newFileName)
+        private void AddToClean(string newFileName)
         {
             // 加入到清理文件
 
@@ -97,7 +98,8 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                     // 忽略
                 }
 
-                await Task.Delay(TimeSpan.FromMilliseconds(200));
+                // 这是命令行工具，只有单个线程在跑，不适合用 Task 异步
+                Thread.Sleep(TimeSpan.FromMilliseconds(200));
             }
         }
     }
