@@ -1,14 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Xml;
-using Lsj.Util.Collections;
-using Lsj.Util.JSON;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -30,11 +21,21 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             var text = File.ReadAllText(file);
 
             var root = (JObject) JsonConvert.DeserializeObject(text);
+            if (root == null)
+            {
+                return false;
+            }
+
             var profilesObject = (JObject)root["profiles"];
+
+            if (profilesObject == null)
+            {
+                return false;
+            }
 
             foreach (var keyValuePair in profilesObject)
             {
-                var commandName = keyValuePair.Value["commandName"];
+                var commandName = keyValuePair.Value?["commandName"];
                 if (commandName?.ToString() == "Executable")
                 {
                     var executablePath = keyValuePair.Value["executablePath"];
