@@ -14,9 +14,12 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
             {
-
-            });
-            Console.WriteLine("UsingMSBuildCopyOutputFileToFastDebug");
+                Logger.Message($"Enter CleanOptions");
+            })
+                .AddHandler<CopyOutputFileOptions>(c =>
+                {
+                    Logger.Message($"Enter CopyOutputFileOptions");
+                });
         }
 
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();
