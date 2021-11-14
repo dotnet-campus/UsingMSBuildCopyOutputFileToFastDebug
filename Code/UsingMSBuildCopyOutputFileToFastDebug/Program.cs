@@ -10,6 +10,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         {
 #if DEBUG
             Logger.Message($"UsingMSBuildCopyOutputFileToFastDebug {Environment.CommandLine}");
+
+            for (var i = 0; i < args.Length; i++)
+            {
+                Logger.Message($"Args[{i}]={args[i]}");
+            }
 #endif
 
             CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
