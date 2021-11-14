@@ -34,7 +34,7 @@
 			<OutputFileToCopyList>"@(OutputFileToCopy)"</OutputFileToCopyList>
     </PropertyGroup>
 
-		<Exec Command="dotnet $(UsingMSBuildCopyOutputFileToFastDebugTaskFile) -- CopyOutputFile -MainProjectPath $(MainProjectPath) -CleanFilePath $(CleanUsingMSBuildCopyOutputFileToFastDebugFile) -OutputFileToCopyList $(OutputFileToCopyList)"/>
+		<Exec Command="dotnet $(UsingMSBuildCopyOutputFileToFastDebugTaskFile) -- CopyOutputFile -MainProjectPath $(MainProjectPath) -CleanFilePath $(CleanUsingMSBuildCopyOutputFileToFastDebugFile) -OutputFileToCopyList $(OutputFileToCopyList) -TargetFramework $(TargetFramework)"/>
 	</Target>
 
 	<!--<Target Name="ParseLaunchSettings" AfterTargets="AfterBuild"

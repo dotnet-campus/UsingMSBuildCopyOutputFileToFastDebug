@@ -33,6 +33,9 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
         [Option("OutputFileToCopyList")]
         public string OutputFileToCopyList { set; get; }
+
+        [Option("TargetFramework")]
+        public string TargetFramework { set; get; }
     }
 
     [Verb("Clean")]
