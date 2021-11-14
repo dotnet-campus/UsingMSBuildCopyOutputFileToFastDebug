@@ -33,7 +33,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             try
             {
-                return CommandLine.Parse(args).AddHandler<CleanOptions>(c => { Logger.Message($"Enter CleanOptions"); })
+                return CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
+                    {
+                        Logger.Message($"Enter CleanOptions");
+                        CleanFile(c);
+                    })
                     .AddHandler<CopyOutputFileOptions>(c =>
                     {
                         Logger.Message($"Enter CopyOutputFileOptions");
@@ -45,6 +49,35 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             {
                 Logger.Error(e.ToString());
                 return -1;
+            }
+        }
+
+        private static void CleanFile(CleanOptions cleanOptions)
+        {
+            try
+            {
+                var cleanFileList = File.ReadAllLines(cleanOptions.CleanFilePath);
+                foreach (var file in cleanFileList)
+                {
+                    try
+                    {
+                        if (File.Exists(file))
+                        {
+                            File.Delete(file);
+                            Logger.Message($"Deleted files: {file}");
+                        }
+                    }
+                    catch 
+                    {
+                        // 删除失败忽略
+                    }
+                }
+
+                File.Delete(cleanOptions.CleanFilePath);
+            }
+            catch
+            {
+                // 删除失败忽略
             }
         }
 
