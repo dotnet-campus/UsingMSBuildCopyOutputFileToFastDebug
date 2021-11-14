@@ -22,7 +22,7 @@
 
 ### 配置
 
-配置有两个方法
+配置有两个方法，高级方法将会覆盖基础方法
 
 **基础方法**：
 
@@ -36,7 +36,7 @@
 
 ```xml
     <PropertyGroup>
-        <MainProjectPath>主项目的输出可执行文件</MainProjectPath>
+        <MainProjectExecutablePathCommandArgs>主项目的输出可执行文件</MainProjectExecutablePathCommandArgs>
     </PropertyGroup>
 ```
 
@@ -44,7 +44,7 @@
 
 ```xml
     <PropertyGroup>
-        <MainProjectExecutablePathCommandArgs>"C:\dotnet campus\Foo\bin\release\net5.0\Foo.exe"</MainProjectPath>
+        <MainProjectExecutablePathCommandArgs>"C:\dotnet campus\Foo\bin\release\net5.0\Foo.exe"</MainProjectExecutablePathCommandArgs>
     </PropertyGroup>
 ```
 
