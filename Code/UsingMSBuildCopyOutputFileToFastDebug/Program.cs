@@ -66,10 +66,28 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             // 如果用户有设置此文件夹，那就期望是输出到此文件夹
             if (!string.IsNullOrEmpty(mainProjectPath))
             {
+                if (Directory.Exists(mainProjectPath) is false)
+                {
+                    throw new DirectoryNotFoundException(
+                        $"Can not find '{mainProjectPath}' FullPath={Path.GetFullPath(mainProjectPath)}");
+                }
+
                 return new DirectoryInfo(mainProjectPath);
             }
+            // 尝试去读取 LaunchSettings 文件
+            var launchSettingsParser = new LaunchSettingsParser();
+            if (launchSettingsParser.Execute())
+            {
+                var launchMainProjectPath = launchSettingsParser.LaunchMainProjectPath;
+                if (Directory.Exists(launchMainProjectPath) is false)
+                {
+                    throw new DirectoryNotFoundException($"Can not find '{launchMainProjectPath}'");
+                }
 
-            return null;
+                return new DirectoryInfo(launchMainProjectPath);
+            }
+
+            throw new ArgumentException($"没有从 MainProjectPath 和 LaunchSettings 获取到输出的文件夹");
         }
 
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();

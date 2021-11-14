@@ -22,7 +22,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             if (!File.Exists(file))
             {
                 Console.WriteLine($"找不到{file}文件，读取结束");
-                return true;
+                return false;
             }
 
             var text = File.ReadAllText(file);
@@ -52,7 +52,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 }
             }
 
-            return true;
+            return false;
         }
 
         public string LaunchMainProjectPath { set; get; }
