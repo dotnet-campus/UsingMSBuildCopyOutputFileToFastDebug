@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "UsingMSBuildCopyOutputFileToFastDebug": {
-      "commandName": "Executable",
-      "executablePath": "foo.exe"
-    }
-  }
-}
