@@ -8,7 +8,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 {
     public class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
 #if DEBUG
             Logger.Message($"UsingMSBuildCopyOutputFileToFastDebug {Environment.CommandLine}");
@@ -30,21 +30,29 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 // 还好上面代码不在乎性能，让我试试这个逗比方法
             }
 
-            CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
+            try
             {
-                Logger.Message($"Enter CleanOptions");
-            })
-                .AddHandler<CopyOutputFileOptions>(c =>
-                {
-                    Logger.Message($"Enter CopyOutputFileOptions");
-                    CopyOutputFile(c);
-                })
-                .Run();
+                return CommandLine.Parse(args).AddHandler<CleanOptions>(c =>
+                     {
+                         Logger.Message($"Enter CleanOptions");
+                     })
+                     .AddHandler<CopyOutputFileOptions>(c =>
+                     {
+                         Logger.Message($"Enter CopyOutputFileOptions");
+                         CopyOutputFile(c);
+                     })
+                     .Run();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString());
+                return -1;
+            }
         }
 
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
-            
+
         }
 
         /// <summary>
@@ -56,7 +64,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         {
             var mainProjectPath = copyOutputFileOptions.MainProjectPath;
             // 如果用户有设置此文件夹，那就期望是输出到此文件夹
-            if(!string.IsNullOrEmpty(mainProjectPath))
+            if (!string.IsNullOrEmpty(mainProjectPath))
             {
                 return new DirectoryInfo(mainProjectPath);
             }
