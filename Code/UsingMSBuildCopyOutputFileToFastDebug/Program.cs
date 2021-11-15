@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,6 +90,12 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         private static void CopyOutputFile(CopyOutputFileOptions copyOutputFileOptions)
         {
             var launchMainProjectExecutableFile = GetLaunchMainProjectExecutablePath(copyOutputFileOptions);
+            if (launchMainProjectExecutableFile == null)
+            {
+                Logger.Message($"[UsingMSBuildCopyOutputFileToFastDebug] LaunchMainProjectExecutableFile is null. 没有啥需要做的");
+                return;
+            }
+
             Logger.Message($"LaunchMainProjectExecutablePath={launchMainProjectExecutableFile}");
             var destinationFolder = launchMainProjectExecutableFile.Directory;
             if (TargetFrameworkChecker.CheckCanCopy(launchMainProjectExecutableFile, copyOutputFileOptions) is false)
@@ -115,7 +122,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         /// </summary>
         /// <param name="copyOutputFileOptions"></param>
         /// <returns></returns>
-        private static FileInfo GetLaunchMainProjectExecutablePath(CopyOutputFileOptions copyOutputFileOptions)
+        private static FileInfo? GetLaunchMainProjectExecutablePath(CopyOutputFileOptions copyOutputFileOptions)
         {
             var mainProjectPath = copyOutputFileOptions.MainProjectExecutablePath;
             // 如果用户有设置此文件夹，那就期望是输出到此文件夹
@@ -123,8 +130,12 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             {
                 if (File.Exists(mainProjectPath) is false)
                 {
-                    throw new FileNotFoundException(
-                        $"Can not find '{mainProjectPath}' FullPath={Path.GetFullPath(mainProjectPath)}");
+                    // 这里不能扔出异常，考虑这个项目还是第一次构建，此时啥输出都应该是不存在的
+                    // 更好的做法是在找不到目标文件的时候，给一个警告而已，毕竟此工具也只推荐在调试下使用而已。加个警告没啥锅
+                    //throw new FileNotFoundException(
+                    //    $"Can not find '{mainProjectPath}' FullPath={Path.GetFullPath(mainProjectPath)}");
+                    Logger.Warning($"[UsingMSBuildCopyOutputFileToFastDebug] 找不到 MainProjectExecutablePath 的定义 '{mainProjectPath}' FullPath={Path.GetFullPath(mainProjectPath)} 文件。如项目首次构建，可忽略");
+                    return null;
                 }
 
                 return new FileInfo(mainProjectPath);
@@ -147,7 +158,10 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
                 if (File.Exists(launchMainProjectExecutablePath) is false)
                 {
-                    throw new FileNotFoundException($"Can not find '{launchMainProjectExecutablePath}'");
+                    // 这里不能扔出异常，考虑这个项目还是第一次构建，此时啥输出都应该是不存在的       //throw new FileNotFoundException($"Can not find '{launchMainProjectExecutablePath}'");
+                    Logger.Warning($"[UsingMSBuildCopyOutputFileToFastDebug] 找不到 LaunchSettings 的定义 '{launchMainProjectExecutablePath}' 文件。如项目首次构建，可忽略");
+
+                    return null;
                 }
 
                 return new FileInfo(launchMainProjectExecutablePath!);
@@ -167,13 +181,13 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         public string MainProjectExecutablePath { set; get; } = null!;
 
         [Option("CleanFilePath")] 
-        public string CleanFilePath { set; get; }
+        public string CleanFilePath { set; get; } = null!;
 
         [Option("OutputFileToCopyList")] 
-        public string OutputFileToCopyList { set; get; }
+        public string OutputFileToCopyList { set; get; } = null!;
 
         [Option("TargetFramework")] 
-        public string TargetFramework { set; get; }
+        public string TargetFramework { set; get; } = null!;
 
         public List<FileInfo> GetOutputFileList()
         {
@@ -192,6 +206,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
     public class CleanOptions
     {
         [Option("CleanFilePath")] 
-        public string CleanFilePath { set; get; }
+        public string CleanFilePath { set; get; } = null!;
     }
 }
