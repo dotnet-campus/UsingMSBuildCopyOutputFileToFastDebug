@@ -47,7 +47,12 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             }
             catch (Exception e)
             {
+#if DEBUG
                 Logger.Error(e.ToString());
+#else
+                var msBuildException = new MSBuildException(e.Message, e);
+                msBuildException.ReportBuildError();
+#endif
                 return -1;
             }
         }
@@ -104,8 +109,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             };
             safeOutputFileCopyTask.Execute();
         }
-
-       
 
         /// <summary>
         /// 获取准备运行的 Exe 的路径
