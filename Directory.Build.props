@@ -7,10 +7,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/dotnet-campus/UsingMSBuildCopyOutputFileToFastDebug</PackageProjectUrl>
         <RepositoryUrl>https://github.com/dotnet-campus/UsingMSBuildCopyOutputFileToFastDebug</RepositoryUrl>
-        <Description>
-            Using MSBuild Copy Output File To Fast Debug
-            通过复制输出文件让 VisualStudio 外部启动快速调试底层库
-        </Description>
+        <Description>Using MSBuild Copy Output File To Fast Debug. 通过复制输出文件让 VisualStudio 外部启动快速调试底层库</Description>
         <Copyright>Copyright (c) 2019-2021 dotnet-campus</Copyright>
         <PackageTags>msbuild debug</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
