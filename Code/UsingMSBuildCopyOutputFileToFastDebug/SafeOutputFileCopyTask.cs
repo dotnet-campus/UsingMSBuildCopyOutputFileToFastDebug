@@ -99,7 +99,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 }
 
                 // 这是命令行工具，只有单个线程在跑，不适合用 Task 异步
-                Thread.Sleep(TimeSpan.FromMilliseconds(200));
+                Thread.Sleep(TimeSpan.FromMilliseconds(20));
             }
         }
     }
