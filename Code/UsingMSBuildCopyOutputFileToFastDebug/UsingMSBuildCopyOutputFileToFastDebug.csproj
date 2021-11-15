@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net5.0</TargetFrameworks>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<!-- 这个项目不进行打包，实际打包的是 ToolPackager 项目 -->
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net5.0</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- 这个项目不进行打包，实际打包的是 ToolPackager 项目 -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="dotnetCampus.CommandLine" Version="3.3.1-alpha03" />
-		<PackageReference Include="dotnetCampus.MSBuildUtils.Source" Version="1.1.1-alpha01">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="dotnetCampus.CommandLine" Version="3.3.1-alpha03" />
+    <PackageReference Include="dotnetCampus.MSBuildUtils.Source" Version="1.1.1-alpha01">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
 </Project>
