@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
@@ -10,8 +11,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         public bool Execute()
         {
             var file = Path.Combine("Properties", "launchSettings.json");
-            Console.WriteLine("开始从 launchSettings 文件读取输出文件夹");
-            Console.WriteLine($"开始读取{file}文件");
+            Console.WriteLine($"开始从 launchSettings（{file}） 文件读取输出文件夹");
             if (!File.Exists(file))
             {
                 Console.WriteLine($"找不到{file}文件，读取结束");
@@ -20,25 +20,18 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             var text = File.ReadAllText(file);
 
-            var root = (JObject) JsonConvert.DeserializeObject(text);
-            if (root == null)
+            var launchSettings = JsonConvert.DeserializeObject<LaunchSettings>(text);
+            if (launchSettings == null)
             {
                 return false;
             }
 
-            var profilesObject = (JObject)root["profiles"];
-
-            if (profilesObject == null)
+            foreach (var launchSettingsProfile in launchSettings.Profiles)
             {
-                return false;
-            }
-
-            foreach (var keyValuePair in profilesObject)
-            {
-                var commandName = keyValuePair.Value?["commandName"];
-                if (commandName?.ToString() == "Executable")
+                var launchProfile = launchSettingsProfile.Value;
+                if (launchProfile.CommandName == "Executable")
                 {
-                    var executablePath = keyValuePair.Value["executablePath"];
+                    var executablePath = launchProfile.ExecutablePath;
                     if (executablePath != null)
                     {
                         // executablePath = C:\lindexi\foo\foo.exe
@@ -52,5 +45,28 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         }
 
         public string LaunchMainProjectExecutablePath { set; get; }
+    }
+
+    [DataContract]
+    public class LaunchSettings
+    {
+        [DataMember(Name = "profiles")]
+        public IDictionary<string, LaunchProfile> Profiles { get; set; }
+    }
+
+    [DataContract]
+    public class LaunchProfile
+    {
+        [DataMember(Name = "commandName")]
+        public string CommandName { get; set; }
+
+        [DataMember(Name = "executablePath")]
+        public string ExecutablePath { get; set; }
+
+        [DataMember(Name = "commandLineArgs")]
+        public string CommandLineArgs { get; set; }
+
+        [DataMember(Name = "nativeDebugging")]
+        public bool NativeDebugging { get; set; }
     }
 }
