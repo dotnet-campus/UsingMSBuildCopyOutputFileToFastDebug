@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
@@ -48,7 +51,56 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 return DotNetType.NetCore;
             }
 
-            return DotNetType.NetFramework;
+            // 如果存在 config 文件，那就是 .NET Framework 的版本了
+            return TryGetDotNetFrameworkVersion(targetExecutableFile)??DotNetType.NetFramework;
+        }
+
+        private static DotNetType? TryGetDotNetFrameworkVersion(FileInfo targetExecutableFile)
+        {
+            var configFile = targetExecutableFile.FullName + ".config";
+            if (!File.Exists(configFile))
+            {
+                return null;
+            }
+
+            var xDocument = XDocument.Load(configFile);
+            var element = xDocument.XPathSelectElement("/configuration/startup/supportedRuntime");
+            if (element == null)
+            {
+                return null;
+            }
+
+            var sku = element.Attribute("sku");
+            var version = sku?.Value;
+            var match = Regex.Match(version ?? string.Empty, @"\.NETFramework,Version=v(\S+)");
+            if (!match.Success)
+            {
+                return null;
+            }
+
+            var dotnet = match.Groups[1].Value;
+            if (dotnet.Contains("4.0"))
+            {
+                return DotNetType.NetFramework40;
+            }
+            if (dotnet.Contains("4.5"))
+            {
+                return DotNetType.NetFramework45;
+            }
+            if (dotnet.Contains("4.6"))
+            {
+                return DotNetType.NetFramework46;
+            }
+            if (dotnet.Contains("4.7"))
+            {
+                return DotNetType.NetFramework47;
+            }
+            if (dotnet.Contains("4.8"))
+            {
+                return DotNetType.NetFramework48;
+            }
+
+            return null;
         }
 
         private static DotNetType GetTargetFrameworkDotNetType(string targetFramework)
