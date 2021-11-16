@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!--让多个不同的框架都能使用此工具-->
+		<TargetFrameworks>net5.0;net45;netstandard1.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<!-- 程序集名不是将打包的 -->
+		<PackageId>dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug</PackageId>
+
+		<!-- 没有包含输出到 NuGet 的 Lib 文件夹的内容，不要警告 -->
+		<NoPackageAnalysis>true</NoPackageAnalysis>
+		<!-- 不包含任何构建的输出文件，这只是一个打包项目而已 -->
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+
+		<!-- 这是一个开发辅助的库 -->
+		<DevelopmentDependency>true</DevelopmentDependency>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- 仅仅只是设置设置项目构建顺序而已 -->
+		<ProjectReference Include="..\UsingMSBuildCopyOutputFileToFastDebug\UsingMSBuildCopyOutputFileToFastDebug.csproj" Condition="'$(TargetFramework)' == 'net5.0'" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!-- 将实际执行的项目的输出作为工具 -->
+		<UsingMSBuildCopyOutputFileToFastDebugOutputPath Condition="'$(Configuration)'=='Debug'">..\UsingMSBuildCopyOutputFileToFastDebug\bin\Debug\net5.0\</UsingMSBuildCopyOutputFileToFastDebugOutputPath>
+
+		<UsingMSBuildCopyOutputFileToFastDebugOutputPath Condition="'$(Configuration)'!='Debug'">..\UsingMSBuildCopyOutputFileToFastDebug\bin\Release\net5.0\</UsingMSBuildCopyOutputFileToFastDebugOutputPath>
+	</PropertyGroup>
+
+	<Target Name="UsingMSBuildCopyOutputFileToFastDebugPackage" BeforeTargets="_GetPackageFiles">
+		<ItemGroup>
+			<None Include="build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\build\$(PackageId).targets" />
+			<None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting" />
+	  <None Include="$(UsingMSBuildCopyOutputFileToFastDebugOutputPath)**" Pack="true" PackagePath="\tools"/>
+    </ItemGroup>
+	</Target>
+
+</Project>

@@ -1,77 +1,72 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Xml;
-using Lsj.Util.Collections;
-using Lsj.Util.JSON;
-using Microsoft.Build.Framework;
-//using Newtonsoft.Json;
-//using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace UsingMSBuildCopyOutputFileToFastDebug
 {
-    public class LaunchSettingsParser : Microsoft.Build.Utilities.Task
+    public class LaunchSettingsParser
     {
-        /// <inheritdoc />
-        public override bool Execute()
+        public bool Execute()
         {
             var file = Path.Combine("Properties", "launchSettings.json");
-            Console.WriteLine("开始从 launchSettings 文件读取输出文件夹");
-            Console.WriteLine($"开始读取{file}文件");
+            Console.WriteLine($"开始从 launchSettings（{file}） 文件读取输出文件夹");
             if (!File.Exists(file))
             {
                 Console.WriteLine($"找不到{file}文件，读取结束");
-                return true;
+                return false;
             }
 
             var text = File.ReadAllText(file);
 
-            var o = JSONParser.Parse(text);
-            var profiles = o.profiles;
-            var data = profiles.data;
-            if (data is SafeDictionary<string, object> d)
+            var launchSettings = JsonConvert.DeserializeObject<LaunchSettings>(text);
+            if (launchSettings == null)
             {
-                foreach (var keyValuePair in d)
-                {
-                    if (keyValuePair.Value is JSONObject jsonObject)
-                    {
-                        if (jsonObject.TryGetMember(new CustomGetMemberBinder("ExecutablePath", true),
-                            out var filePath))
-                        {
-                            var path = filePath?.ToString();
+                return false;
+            }
 
-                            if (!string.IsNullOrEmpty(path))
-                            {
-                                LaunchMainProjectPath = Path.GetDirectoryName(path);
-                                Console.WriteLine($"读取到 {LaunchMainProjectPath} 文件夹");
-                                return true;
-                            }
-                        }
+            foreach (var launchSettingsProfile in launchSettings.Profiles)
+            {
+                var launchProfile = launchSettingsProfile.Value;
+                if (launchProfile.CommandName == "Executable")
+                {
+                    var executablePath = launchProfile.ExecutablePath;
+                    if (executablePath != null)
+                    {
+                        // executablePath = C:\lindexi\foo\foo.exe
+                        LaunchMainProjectExecutablePath = executablePath.ToString();
+                        return true;
                     }
                 }
             }
 
-            return true;
+            return false;
         }
 
-        [Output]
-        public string LaunchMainProjectPath { set; get; }
+        public string LaunchMainProjectExecutablePath { set; get; }
     }
 
-    public class CustomGetMemberBinder : GetMemberBinder
+    [DataContract]
+    public class LaunchSettings
     {
-        /// <inheritdoc />
-        public CustomGetMemberBinder(string name, bool ignoreCase) : base(name, ignoreCase)
-        {
-        }
+        [DataMember(Name = "profiles")]
+        public IDictionary<string, LaunchProfile> Profiles { get; set; }
+    }
 
-        /// <inheritdoc />
-        public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
-        {
-            return null;
-        }
+    [DataContract]
+    public class LaunchProfile
+    {
+        [DataMember(Name = "commandName")]
+        public string CommandName { get; set; }
+
+        [DataMember(Name = "executablePath")]
+        public string ExecutablePath { get; set; }
+
+        [DataMember(Name = "commandLineArgs")]
+        public string CommandLineArgs { get; set; }
+
+        [DataMember(Name = "nativeDebugging")]
+        public bool NativeDebugging { get; set; }
     }
 }

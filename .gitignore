@@ -234,3 +234,4 @@ $RECYCLE.BIN/
 # VS 编译中间文件
 *_wpftmp.csproj 
 **/SourceProject/*.Source.SourceProject.props
+launchSettings.json
