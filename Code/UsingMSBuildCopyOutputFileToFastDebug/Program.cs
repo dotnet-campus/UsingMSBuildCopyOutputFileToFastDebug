@@ -168,6 +168,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             }
 
             Logger.Warning($"[UsingMSBuildCopyOutputFileToFastDebug] 没有从 MainProjectExecutablePath 和 LaunchSettings 获取到输出的文件夹");
+            return null;
         }
 
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();
