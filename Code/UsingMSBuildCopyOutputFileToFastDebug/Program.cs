@@ -167,12 +167,12 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 return new FileInfo(launchMainProjectExecutablePath!);
             }
 
-            throw new ArgumentException($"没有从 MainProjectExecutablePath 和 LaunchSettings 获取到输出的文件夹");
+            Logger.Warning($"[UsingMSBuildCopyOutputFileToFastDebug] 没有从 MainProjectExecutablePath 和 LaunchSettings 获取到输出的文件夹");
+            return null;
         }
 
         private static IMSBuildLogger Logger { get; } = new MSBuildConsoleLogger();
     }
-
 
     [Verb("CopyOutputFile")]
     public class CopyOutputFileOptions
