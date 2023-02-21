@@ -4,8 +4,10 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net5.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <!-- 这个项目不进行打包，实际打包的是 ToolPackager 项目 -->
+    <!-- 这个项目不进行打包，实际打包的是 ToolPackager 项目。这是为了可以让 NET45 等框架的项目也能使用此库 -->
     <IsPackable>false</IsPackable>
+    <!--现在 .NET5 过时了，很多开发者都不会安装了，于是设置自动回滚，如果开发者有安装更新版本的，就自动使用新版本 -->
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
