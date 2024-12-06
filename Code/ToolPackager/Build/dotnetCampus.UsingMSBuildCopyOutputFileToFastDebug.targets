@@ -30,7 +30,7 @@
     </PropertyGroup>
 
     <Exec
-      Command="dotnet $(UsingMSBuildCopyOutputFileToFastDebugTaskFile) -- CopyOutputFile  $(MainProjectExecutablePathCommandArgs) -CleanFilePath $(CleanUsingMSBuildCopyOutputFileToFastDebugFile) -OutputFileToCopyList $(OutputFileToCopyList) -TargetFramework $(TargetFramework)" />
+      Command="dotnet $(UsingMSBuildCopyOutputFileToFastDebugTaskFile) -- CopyOutputFile  $(MainProjectExecutablePathCommandArgs) -CleanFilePath $(CleanUsingMSBuildCopyOutputFileToFastDebugFile) -OutputFileToCopyList $(OutputFileToCopyList) -TargetFramework $(TargetFramework) -TargetFrameworks $(TargetFrameworks)" />
   </Target>
 
   <Target Name="BanCopyOutputLibToFastDebug" AfterTargets="AfterBuild"

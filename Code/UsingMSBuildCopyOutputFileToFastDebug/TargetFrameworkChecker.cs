@@ -155,7 +155,27 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 return DotNetType.Net6;
             }
 
-            throw new ArgumentException($"Unknown TargetFrame {targetFramework}");
+            if (targetFramework.Contains("net7."))
+            {
+                return DotNetType.Net7;
+            }
+
+            if (targetFramework.Contains("net8."))
+            {
+                return DotNetType.Net8;
+            }
+
+            if (targetFramework.Contains("net9."))
+            {
+                return DotNetType.Net9;
+            }
+
+            if (Regex.IsMatch(targetFramework, @"net\d"))
+            {
+                return DotNetType.NetCore;
+            }
+
+            throw new ArgumentException($"Unknown TargetFramework {targetFramework}");
         }
     }
 
@@ -183,5 +203,8 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         Net5 = 1 << 15 | NetCore,
         Net6 = 1 << 16 | NetCore,
 
+        Net7 = 1 << 17 | NetCore,
+        Net8 = 1 << 18 | NetCore,
+        Net9 = 1 << 19 | NetCore,
     }
 }

@@ -98,7 +98,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
             Logger.Message($"LaunchMainProjectExecutablePath={launchMainProjectExecutableFile}");
             var destinationFolder = launchMainProjectExecutableFile.Directory;
-            if (TargetFrameworkChecker.CheckCanCopy(launchMainProjectExecutableFile, copyOutputFileOptions) is false)
+
+            var isSingleFramework = IsSingleFramework(copyOutputFileOptions);
+
+            // 非单个框架，即多个框架的情况下，需要检查是否可以拷贝
+            if (!isSingleFramework && TargetFrameworkChecker.CheckCanCopy(launchMainProjectExecutableFile, copyOutputFileOptions) is false)
             {
 #if DEBUG
                 Logger.Message($"当前框架{copyOutputFileOptions.TargetFramework}与{launchMainProjectExecutableFile.FullName}不兼容");
@@ -115,6 +119,21 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 SourceFiles = outputFileList.Select(t => t.FullName).ToArray()
             };
             safeOutputFileCopyTask.Execute();
+        }
+
+        private static bool IsSingleFramework(CopyOutputFileOptions copyOutputFileOptions)
+        {
+            var targetFrameworks = copyOutputFileOptions.TargetFrameworks;
+            if (string.IsNullOrEmpty(targetFrameworks))
+            {
+                // 没有记录 TargetFrameworks 属性，则证明是单个框架
+                // 如 <TargetFramework>net9.0</TargetFramework>
+                return true;
+            }
+
+            // 虽然写的是 TargetFrameworks 属性，但是实际上是单个框架
+            // 如 <TargetFrameworks>net9.0</TargetFrameworks>
+            return targetFrameworks == copyOutputFileOptions.TargetFramework;
         }
 
         /// <summary>
@@ -188,6 +207,9 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
         [Option("TargetFramework")] 
         public string TargetFramework { set; get; } = null!;
+
+        [Option("TargetFrameworks")]
+        public string? TargetFrameworks { set; get; }
 
         public List<FileInfo> GetOutputFileList()
         {
