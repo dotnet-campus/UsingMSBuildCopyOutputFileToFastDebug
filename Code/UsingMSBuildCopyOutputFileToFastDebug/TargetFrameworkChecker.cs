@@ -52,7 +52,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
             }
 
             // 如果存在 config 文件，那就是 .NET Framework 的版本了
-            return TryGetDotNetFrameworkVersion(targetExecutableFile)??DotNetType.NetFramework;
+            return TryGetDotNetFrameworkVersion(targetExecutableFile) ?? DotNetType.NetFramework;
         }
 
         private static DotNetType? TryGetDotNetFrameworkVersion(FileInfo targetExecutableFile)
@@ -170,6 +170,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 return DotNetType.Net9;
             }
 
+            if (targetFramework.Contains("net10."))
+            {
+                return DotNetType.Net10;
+            }
+
             if (Regex.IsMatch(targetFramework, @"net\d"))
             {
                 return DotNetType.NetCore;
@@ -206,5 +211,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         Net7 = 1 << 17 | NetCore,
         Net8 = 1 << 18 | NetCore,
         Net9 = 1 << 19 | NetCore,
+        Net10 = 1 << 20 | NetCore,
     }
 }
