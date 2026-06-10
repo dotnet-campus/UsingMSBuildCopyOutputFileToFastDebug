@@ -175,6 +175,11 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
                 return DotNetType.Net10;
             }
 
+            if (targetFramework.Contains("net11."))
+            {
+                return DotNetType.Net11;
+            }
+
             if (Regex.IsMatch(targetFramework, @"net\d"))
             {
                 return DotNetType.NetCore;
@@ -212,5 +217,6 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
         Net8 = 1 << 18 | NetCore,
         Net9 = 1 << 19 | NetCore,
         Net10 = 1 << 20 | NetCore,
+        Net11 = 1 << 21 | NetCore,
     }
 }
