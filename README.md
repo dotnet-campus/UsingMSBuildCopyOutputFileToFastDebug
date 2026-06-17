@@ -1,4 +1,4 @@
-# Roslyn 让 VisualStudio 急速调试底层库方法
+﻿# Roslyn 让 VisualStudio 急速调试底层库方法
 
 在一个大项目里面调试底层库经常需要重新编译整个项目，本项目提供了在底层库编译完成之后将输出文件复制到主项目的输出文件夹，通过外部项目调试的方式提高调试效率
 
@@ -98,7 +98,18 @@
 
 ### 复制文件
 
-工具默认将当前项目的输出 dll 和 pdb 文件（`$(AssemblyName).dll` 和 `$(AssemblyName).pdb`）拷贝到主项目可执行文件所在的文件夹。如需复制更多文件，可在项目文件中自行扩展 `OutputFileToCopy` 项组。
+工具默认将当前项目的输出 dll 和 pdb 文件（`$(AssemblyName).dll` 和 `$(AssemblyName).pdb`）拷贝到主项目可执行文件所在的文件夹。如需复制更多文件，可在项目文件中自行扩展 `OutputFileToCopy` 项组。示例如下，可实现将追加的文件一并输出到最终输出路径：
+
+```xml
+  <ItemGroup>
+    <OutputFileToCopy Include="$(OutputPath)Lib1.dll" />
+    <OutputFileToCopy Include="$(OutputPath)Lib1.pdb" />
+    <OutputFileToCopy Include="$(OutputPath)Lib2.dll" />
+    <OutputFileToCopy Include="$(OutputPath)Lib2.pdb" />
+  </ItemGroup>
+```
+
+通常，这个功能用于将所依赖的基础库一并输出到最终输出路径。当依赖库也有变更时，仅复制当前项目的产物会导致依赖项目未被拷贝，进而出现调试时无法命中断点的问题。
 
 ### 文件占用处理
 
