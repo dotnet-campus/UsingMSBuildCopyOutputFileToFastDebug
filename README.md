@@ -16,7 +16,7 @@
 
 ```xml
   <ItemGroup Condition=" '$(Configuration)' == 'Debug'">
-    <PackageReference Include="dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug" Version="1.3.1" />
+    <PackageReference Include="dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug" Version="1.3.233" />
   </ItemGroup>
 ```
 
