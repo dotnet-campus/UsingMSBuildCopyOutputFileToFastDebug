@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- 
+      配置为无依赖。即避免带上 TargetFramework=netstandard2.0 的限制
+      配合 IncludeBuildOutput=false 即可让任意项目引用，无视目标框架
+    -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+
     <!-- 程序集名不是将打包的 -->
     <PackageId>dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug</PackageId>
 
@@ -36,7 +42,16 @@
     <ItemGroup>
       <None Include="build\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\build\$(PackageId).targets" />
       <None Include="buildMultiTargeting\dotnetCampus.UsingMSBuildCopyOutputFileToFastDebug.targets" Pack="True" PackagePath="\buildMultiTargeting" />
-      <None Include="$(UsingMSBuildCopyOutputFileToFastDebugOutputPath)**" Pack="true" PackagePath="\tools"/>
+      <None Include="$(UsingMSBuildCopyOutputFileToFastDebugOutputPath)**" Pack="true" PackagePath="\tools" />
+    </ItemGroup>
+
+    <!-- 以下是打 NuGet 包相关辅助方法 -->
+    <PropertyGroup>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <!-- 嵌入 README 文件 -->
+      <None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="\" Visible="false"/>
     </ItemGroup>
   </Target>
 

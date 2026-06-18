@@ -67,7 +67,7 @@ namespace UsingMSBuildCopyOutputFileToFastDebug
 
                 }
 
-                Console.WriteLine("开始复制文件 " + destinationFile);
+                Console.WriteLine($"开始复制文件 '{sourceFile.FullName}' -> '{destinationFile}'");
 
                 File.Copy(sourceFile.FullName, destinationFile);
 
